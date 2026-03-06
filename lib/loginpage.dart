@@ -3,13 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zawj_app/constant/app_color.dart';
 import 'package:zawj_app/constant/button_style.dart';
 import 'package:zawj_app/constant/decoration_form.dart';
-import 'package:zawj_app/database/preference.dart';
 import 'package:zawj_app/extention/navigator.dart';
-import 'package:zawj_app/homepage.dart';
-import 'package:zawj_app/models/user_model.dart';
+import 'package:zawj_app/handlers/login_handler.dart';
+import 'package:zawj_app/main_screen.dart';
 import 'package:zawj_app/registpage.dart';
-
-import '../database/sqflite.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,6 +17,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isipassword = true;
+  bool isLoading = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -36,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 50,
-        backgroundColor: Colors.white,
         title: Row(
           children: [
             Text(
@@ -63,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 const SizedBox(height: 50),
-
                 Text(
                   "Selamat Datang",
                   style: GoogleFonts.montaga(
@@ -72,9 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: AppColor.pinktua,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
                   "Masuk untuk melanjutkan perjalanan menuju pernikahan yang berkah.",
                   textAlign: TextAlign.center,
@@ -84,18 +78,14 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
                 TextFormField(
                   controller: emailController,
                   decoration: decorationConstant(
                     hintText: 'Email',
-                  ).copyWith(prefixIcon: Icon(Icons.email_outlined)),
+                  ).copyWith(prefixIcon: const Icon(Icons.email_outlined)),
                 ),
-
                 const SizedBox(height: 16),
-
                 TextFormField(
                   controller: passwordController,
                   obscureText: isipassword,
@@ -113,183 +103,156 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    "Lupa Password?",
-                    style: const TextStyle(
-                      color: Color(0xFFE76CA3),
-                      fontSize: 15,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Lupa Password?",
+                      style: TextStyle(color: AppColor.pinktua, fontSize: 14),
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 40),
-                buttonConstant(
-                  text: 'Masuk',
-                  width: 400,
-                  onPressed: () async {
-                    final UserModel? login = await DBHelper.loginUser(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    if (login != null) {
-                      PreferenceHandler.storingIsLogin(true);
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text("Login Berhasil")));
-
-                      await Future.delayed(const Duration(seconds: 2));
-                      context.push(Homepage());
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Login Gagal, email atau password salah",
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-
+                const SizedBox(height: 20),
+                isLoading
+                    ? const CircularProgressIndicator(color: AppColor.pinktua)
+                    : buttonConstant(
+                        text: 'Masuk',
+                        width: double.infinity,
+                        onPressed: () async {
+                          setState(() => isLoading = true);
+                          await LoginHandler.login(
+                            context: context,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            onSuccess: () {
+                              context.pushReplacement(const MainScreen());
+                            },
+                          );
+                          if (mounted) {
+                            setState(() => isLoading = false);
+                          }
+                        },
+                      ),
                 const SizedBox(height: 30),
-                Center(
-                  child: Text(
-                    "Atau lanjutkan dengan",
-                    style: GoogleFonts.montaga(
-                      color: AppColor.hitam,
-                      fontSize: 18,
-                    ),
+                Text(
+                  "Atau lanjutkan dengan",
+                  style: GoogleFonts.montaga(
+                    color: AppColor.abumuda,
+                    fontSize: 14,
                   ),
                 ),
-                SizedBox(height: 35),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
                       borderRadius: BorderRadius.circular(50),
-                      onTap: () {
-                        print("google login");
-                      },
+                      onTap: () {},
                       child: Container(
-                        width: 60,
-                        height: 60,
+                        width: 55,
+                        height: 55,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFBFCF7FF),
-                          //Color(0xFFFFB7DC),
+                          color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color.fromARGB(255, 201, 199, 199),
-                              blurRadius: 12,
-                              offset: Offset(0, 4),
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Center(
                           child: Image.asset(
                             'assets/icons/google.png',
-                            width: 30,
+                            width: 28,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
-
+                    const SizedBox(width: 20),
                     InkWell(
                       borderRadius: BorderRadius.circular(50),
-                      onTap: () {
-                        print("google login");
-                      },
+                      onTap: () {},
                       child: Container(
-                        width: 60,
-                        height: 60,
+                        width: 55,
+                        height: 55,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFBFCF7FF),
-                          //Color(0xFFFFB7DC),
+                          color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color.fromARGB(255, 201, 199, 199),
-                              blurRadius: 12,
-                              offset: Offset(0, 4),
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Center(
                           child: Image.asset(
                             'assets/icons/apple.png',
-                            width: 30,
+                            width: 28,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
-
+                    const SizedBox(width: 20),
                     InkWell(
                       borderRadius: BorderRadius.circular(50),
-                      onTap: () {
-                        print("google login");
-                      },
+                      onTap: () {},
                       child: Container(
-                        width: 60,
-                        height: 60,
+                        width: 55,
+                        height: 55,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFBFCF7FF),
-                          //Color(0xFFFFB7DC),
+                          color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color.fromARGB(255, 201, 199, 199),
-                              blurRadius: 12,
-                              offset: Offset(0, 4),
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Center(
                           child: Image.asset(
                             'assets/icons/facebook.png',
-                            width: 30,
+                            width: 28,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 20, height: 16),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Belum Punya Akun? ",
-                        style: GoogleFonts.montaga(
-                          fontSize: 16,
-                          color: AppColor.hitam,
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Belum Punya Akun? ",
+                      style: GoogleFonts.montaga(
+                        fontSize: 14,
+                        color: AppColor.abumuda,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.push(const Registpage());
+                      },
+                      child: Text(
+                        "Daftar",
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.pinktua,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          context.push(Registpage());
-                        },
-                        child: Text(
-                          "Daftar",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFFE76CA3),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

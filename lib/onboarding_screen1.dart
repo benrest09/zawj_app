@@ -26,8 +26,8 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
               SizedBox(height: 50),
               Image.asset(
                 "assets/images/onboarding1.png",
-                width: 400,
-                height: 500,
+                width: 300,
+                height: 400,
                 fit: BoxFit.contain,
               ),
               Text(
@@ -42,7 +42,7 @@ class _OnboardingScreen1State extends State<OnboardingScreen1> {
                 "Dengan Cara yang Diridhai Allah",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 18,
                   color: AppColor.pinkmuda,
                 ),
               ),

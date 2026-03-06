@@ -27,8 +27,8 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
               SizedBox(height: 40),
               Image.asset(
                 "assets/images/onboarding3.png",
-                width: 400,
-                height: 500,
+                width: 300,
+                height: 400,
                 fit: BoxFit.contain,
               ),
               Text(
@@ -43,16 +43,14 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
                 "Menuju Pernikahan yang Berkah",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 18,
                   color: AppColor.pinkmuda,
                 ),
               ),
               SizedBox(height: 10),
               Text(
                 textAlign: TextAlign.center,
-                'Bergabunglah dengan para Muslim dan \n'
-                'Muslimah yang telah menemukan pasangan \n'
-                'hidup mereka melalui Find My Zawj \n',
+                "Bergabunglah dengan para Muslim dan Muslimah yang telah menemukan pasangan hidup mereka melalui Find My Zawj",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -60,6 +58,7 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
                   height: 1.7,
                 ),
               ),
+              SizedBox(height: 10),
 
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

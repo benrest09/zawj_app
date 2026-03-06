@@ -26,8 +26,8 @@ class _OnboardingScreen2State extends State<OnboardingScreen2> {
               SizedBox(height: 50),
               Image.asset(
                 "assets/images/onboarding2.png",
-                width: 400,
-                height: 500,
+                width: 300,
+                height: 400,
                 fit: BoxFit.contain,
               ),
               Text(
@@ -42,17 +42,14 @@ class _OnboardingScreen2State extends State<OnboardingScreen2> {
                 "Data Anda Terlindungi",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 18,
                   color: AppColor.pinkmuda,
                 ),
               ),
               SizedBox(height: 10),
               Text(
                 textAlign: TextAlign.center,
-                'Kami menjaga privasi dan keamanan data \n'
-                'pribadi Anda dengan standar tertinggi dan \n'
-                'proses verifikasi ketat untuk memastikan\n'
-                'profil yang autentik',
+                "Kami menjaga privasi dan keamanan data pribadi Anda dengan standar tertinggi dan proses verifikasi ketat untuk memastikan profil yang autentik",
                 style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

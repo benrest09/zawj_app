@@ -86,7 +86,7 @@ Widget ayatHarian() {
         const SizedBox(height: 15),
 
         SizedBox(
-          height: 240,
+          height: 270,
           child: PageView.builder(
             itemCount: ayatList.length,
             itemBuilder: (context, index) {
