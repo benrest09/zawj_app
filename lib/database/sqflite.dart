@@ -39,7 +39,7 @@ class DBHelper {
     print('   User data: ${user.toMap()}');
 
     final database = await db();
-    print('   Database: ${database != null ? "OK" : "NULL"}');
+    print('   Database: ${"OK"}');
 
     final data = user.toMap();
     print('   Inserting data: $data');

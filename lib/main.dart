@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zawj_app/loginpage.dart';
-import 'package:zawj_app/main_screen.dart';
-import 'package:zawj_app/registpage.dart';
-import 'package:zawj_app/splash_screen.dart';
+import 'package:zawj_app/daftarpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +31,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SplashScreen(),
+      home: Daftarpage(),
     );
   }
 }
