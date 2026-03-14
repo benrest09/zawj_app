@@ -19,14 +19,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void autoLogin() async {
-    await Future.delayed(Duration(seconds: 3));
-    bool? isLogin = await PreferenceHandler.getIsLogin();
+    await Future.delayed(const Duration(seconds: 3));
+
+    bool isLogin = await PreferenceHandler.isLogin();
 
     if (!mounted) return;
-    if (isLogin == true) {
-      context.pushAndRemoveAll(LoginPage());
+
+    if (isLogin) {
+      context.pushAndRemoveAll(const LoginPage());
     } else {
-      context.pushAndRemoveAll(OnboardingScreen1());
+      context.pushAndRemoveAll(const OnboardingScreen1());
     }
   }
 
@@ -35,11 +37,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/icons/zawj.png", width: 150, height: 150),
-          ],
+        child: Container(
+          width: 150,
+          height: 150,
+          child: Image.asset("assets/icons/zawj.png", fit: BoxFit.contain),
         ),
       ),
     );

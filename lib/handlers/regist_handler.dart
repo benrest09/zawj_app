@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zawj_app/controller/userController.dart';
 import 'package:zawj_app/models/user_model.dart';
 
@@ -11,11 +12,6 @@ class RegisterHandler {
     required String confirmPassword,
     required VoidCallback onSuccess,
   }) async {
-    print(' RegisterHandler.register called');
-    print('   Input nama: "$nama"');
-    print('   Input email: "$email"');
-    print('   Input password: "$password"');
-
     if (nama.isEmpty || email.isEmpty || password.isEmpty) {
       _showSnackBar(context, 'Semua data harus diisi', Colors.red);
       return false;
@@ -26,34 +22,30 @@ class RegisterHandler {
       return false;
     }
 
-    if (password.length < 6) {
-      _showSnackBar(context, 'Password minimal 6 karakter', Colors.red);
-      return false;
-    }
-
     try {
       final newUser = UserModel(
         nama: nama.trim(),
         email: email.trim(),
         password: password,
+        createdAt: DateTime.now().toIso8601String(),
       );
 
-      print('📦 Created UserModel:');
-      print('   nama: "${newUser.nama}"');
-      print('   email: "${newUser.email}"');
-      print('   password: "${newUser.password}"');
+      final userId = await UserController.registerUser(newUser);
 
-      await UserController.registerUser(newUser);
+      if (userId > 0) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('user_id', userId);
+        await prefs.setString('user_email', newUser.email);
+        await prefs.setString('user_nama', newUser.nama);
 
-      _showSnackBar(
-        context,
-        'Registrasi berhasil! Silakan login',
-        Colors.green,
-      );
-      onSuccess();
-      return true;
+        _showSnackBar(context, 'Registrasi berhasil!', Colors.green);
+        onSuccess();
+        return true;
+      } else {
+        _showSnackBar(context, 'Gagal registrasi', Colors.red);
+        return false;
+      }
     } catch (e) {
-      print('❌ Register error: $e');
       _showSnackBar(context, 'Gagal: ${e.toString()}', Colors.red);
       return false;
     }

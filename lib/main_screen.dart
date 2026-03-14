@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:zawj_app/chatgroup.dart';
+import 'package:zawj_app/chatpage.dart';
 import 'package:zawj_app/constant/app_color.dart';
 import 'package:zawj_app/homepage.dart';
 import 'package:zawj_app/profilpage.dart';
-import 'package:zawj_app/riwayatpage.dart';
+import 'package:zawj_app/inboxpage.dart';
 import 'package:zawj_app/serasi.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,10 +18,10 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     Homepage(),
-    Riwayatpage(),
-    Serasipage(),
-    Chatgrouppage(),
-    Profilpage(),
+    InboxPage(),
+    SerasiPage(),
+    ChatPage(),
+    ProfilPage(),
   ];
 
   void _onTap(int index) {
@@ -49,9 +49,9 @@ class _MainScreenState extends State<MainScreen> {
             label: 'home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.hourglass_empty),
-            activeIcon: Icon(Icons.hourglass_full),
-            label: 'riwayat',
+            icon: Icon(Icons.add_box_outlined),
+            activeIcon: Icon(Icons.add_box),
+            label: 'inbox',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite_border_outlined),

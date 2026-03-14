@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zawj_app/constant/app_color.dart';
 import 'package:zawj_app/constant/button_style.dart';
 import 'package:zawj_app/constant/decoration_form.dart';
+import 'package:zawj_app/controller/profile_controller.dart';
 import 'package:zawj_app/extention/navigator.dart';
+import 'package:zawj_app/models/userprofile_model.dart';
 
 class Daftarpage extends StatefulWidget {
-  const Daftarpage({super.key});
+  final bool isEdit;
+  final UserprofileModel? profile;
+
+  const Daftarpage({super.key, this.isEdit = false, this.profile});
 
   @override
   State<Daftarpage> createState() => _DaftarpageState();
@@ -14,12 +20,10 @@ class Daftarpage extends StatefulWidget {
 class _DaftarpageState extends State<Daftarpage> {
   int PilihanAvatarIndex = 0;
   DateTime? _selectedDate;
-
   final List<String> PilihanAvatar = [
     'assets/images/ikhwan.jpg',
     'assets/images/akhwat.jpg',
   ];
-
   String? jenisKelamin = 'Ikhwan';
   String? statusPernikahan = 'Belum menikah';
   String? rajinSholatValue = 'Selalu tepat waktu';
@@ -35,19 +39,100 @@ class _DaftarpageState extends State<Daftarpage> {
   bool apaBercadar = false;
   bool waliMengetahui = false;
   bool bersediaPindahKota = false;
-
   bool setujuTidakKomunikasiDiluarSistem = false;
   bool setujuSatuTaarufSatuWaktu = false;
   bool setujuKebijakanPrivasi = false;
-
   String? fotoKTPPath;
   String? akteCeraiPath;
   String? buktiSedekahPath;
 
+  final namaLengkapController = TextEditingController();
+  final tempatLahirController = TextEditingController();
+  final domisiliController = TextEditingController();
+  final sukuController = TextEditingController();
+  final kewarganegaraanController = TextEditingController();
+  final pekerjaanController = TextEditingController();
+  final bidangPekerjaanController = TextEditingController();
+  final penghasilanController = TextEditingController();
+  final tentangSayaController = TextEditingController();
+  final kajianRutinController = TextEditingController();
+  final jumlahAnakController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.profile != null) {
+      _loadProfileData();
+    }
+  }
+
+  void _loadProfileData() {
+    final profile = widget.profile!;
+    setState(() {
+      namaLengkapController.text = profile.namaLengkap;
+      tempatLahirController.text = profile.tempatlahir;
+      domisiliController.text = profile.domisili;
+      sukuController.text = profile.suku;
+      kewarganegaraanController.text = profile.kewarganegaraan;
+      pekerjaanController.text = profile.pekerjaan ?? '';
+      bidangPekerjaanController.text = profile.bidangPekerjaan ?? '';
+      penghasilanController.text = profile.penghasilan ?? '';
+      tentangSayaController.text = profile.tentangSaya;
+      kajianRutinController.text = profile.kajianRutin ?? '';
+      jumlahAnakController.text = profile.jumlahAnak?.toString() ?? '0';
+      jenisKelamin = profile.jenisKelamin;
+
+      // ✅ AUTO SET AVATAR BERDASARKAN JENIS KELAMIN
+      if (profile.jenisKelamin == 'Ikhwan') {
+        PilihanAvatarIndex = 0;
+      } else {
+        PilihanAvatarIndex = 1;
+      }
+
+      statusPernikahan = profile.statusNikah;
+      rajinSholatValue = profile.sholat;
+      hafalanQuran = profile.hafalanQuran;
+      mauPoligami = profile.mauPoligami;
+      panjangHijab = profile.panjangHijab;
+      pendidikan = profile.pendidikan;
+      targetMenikah = profile.targetNikah;
+      punyaAnak = profile.punyaAnak == 1;
+      apaBercadar = profile.bercadar == 1;
+      waliMengetahui = profile.waliTahu == 1;
+      bersediaPindahKota = profile.bersediaPindah == 1;
+      setujuTidakKomunikasiDiluarSistem =
+          profile.setujuTidakKomunikasiDiluarSistem == 1;
+      setujuSatuTaarufSatuWaktu = profile.setujuSatuTaarufSatuWaktu == 1;
+      setujuKebijakanPrivasi = profile.setujuKebijakanPrivasi == 1;
+      if (profile.tanggalLahir.isNotEmpty) {
+        _selectedDate = DateTime.parse(profile.tanggalLahir);
+      }
+      fotoKTPPath = profile.fotoKtp;
+      akteCeraiPath = profile.akteCerai;
+      buktiSedekahPath = profile.buktiSedekah;
+    });
+  }
+
+  @override
+  void dispose() {
+    namaLengkapController.dispose();
+    tempatLahirController.dispose();
+    domisiliController.dispose();
+    sukuController.dispose();
+    kewarganegaraanController.dispose();
+    pekerjaanController.dispose();
+    bidangPekerjaanController.dispose();
+    penghasilanController.dispose();
+    tentangSayaController.dispose();
+    kajianRutinController.dispose();
+    jumlahAnakController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
@@ -84,7 +169,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       setState(() {
                         PilihanAvatarIndex = index;
                       });
-                      context.pop(context);
+                      Navigator.pop(context);
                     },
                     child: Container(
                       width: 120,
@@ -332,6 +417,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: namaLengkapController,
                         decoration: decorationConstant(
                           hintText: "Nama Lengkap",
                         ),
@@ -346,7 +432,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       DropdownButtonFormField<String>(
-                        value: jenisKelamin,
+                        initialValue: jenisKelamin,
                         items: ['Ikhwan', 'Akhwat'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -356,6 +442,11 @@ class _DaftarpageState extends State<Daftarpage> {
                         onChanged: (newValue) {
                           setState(() {
                             jenisKelamin = newValue;
+                            if (newValue == 'Ikhwan') {
+                              PilihanAvatarIndex = 0;
+                            } else {
+                              PilihanAvatarIndex = 1;
+                            }
                           });
                         },
                       ),
@@ -390,6 +481,14 @@ class _DaftarpageState extends State<Daftarpage> {
                             child: TextFormField(
                               decoration: decorationConstant(hintText: "Usia"),
                               keyboardType: TextInputType.number,
+                              readOnly: true,
+                              controller: TextEditingController(
+                                text: _selectedDate != null
+                                    ? (DateTime.now().year -
+                                              _selectedDate!.year)
+                                          .toString()
+                                    : '',
+                              ),
                             ),
                           ),
                         ],
@@ -404,6 +503,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: tempatLahirController,
                         decoration: decorationConstant(
                           hintText: "Tempat Lahir",
                         ),
@@ -418,6 +518,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: domisiliController,
                         decoration: decorationConstant(hintText: "Domisili"),
                       ),
                       SizedBox(height: 10),
@@ -430,6 +531,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: sukuController,
                         decoration: decorationConstant(
                           hintText: "Suku atau Etnis",
                         ),
@@ -444,6 +546,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: kewarganegaraanController,
                         decoration: decorationConstant(
                           hintText: "Kewarganegaraan",
                         ),
@@ -487,7 +590,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       DropdownButtonFormField<String>(
-                        value: pendidikan,
+                        initialValue: pendidikan,
                         items: ['SD', 'SMP', 'SMA', 'S1', 'S2', 'S3'].map((
                           String value,
                         ) {
@@ -512,6 +615,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: pekerjaanController,
                         decoration: decorationConstant(hintText: "Pekerjaan"),
                       ),
                       SizedBox(height: 10),
@@ -524,6 +628,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: bidangPekerjaanController,
                         decoration: decorationConstant(
                           hintText: "Bidang Pekerjaan",
                         ),
@@ -538,6 +643,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: penghasilanController,
                         decoration: decorationConstant(
                           hintText: "Kisaran Penghasilan",
                         ),
@@ -581,7 +687,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       DropdownButtonFormField<String>(
-                        value: targetMenikah,
+                        initialValue: targetMenikah,
                         items:
                             [
                               '< 6 bulan',
@@ -708,6 +814,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: tentangSayaController,
                         decoration: decorationConstant(
                           hintText: "Ceritakan tentang dirimu",
                         ),
@@ -746,7 +853,7 @@ class _DaftarpageState extends State<Daftarpage> {
                         decoration: decorationConstant(
                           hintText: "Status Pernikahan",
                         ),
-                        value: statusPernikahan,
+                        initialValue: statusPernikahan,
                         items:
                             [
                               'Belum menikah',
@@ -808,7 +915,9 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: jumlahAnakController,
                         decoration: decorationConstant(hintText: "Jumlah Anak"),
+                        keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 10),
                       SizedBox(height: 10),
@@ -824,7 +933,7 @@ class _DaftarpageState extends State<Daftarpage> {
                         decoration: decorationConstant(
                           hintText: "Apakah bersedia poligami?",
                         ),
-                        value: mauPoligami,
+                        initialValue: mauPoligami,
                         items:
                             [
                               'Ya, saya bersedia',
@@ -890,7 +999,7 @@ class _DaftarpageState extends State<Daftarpage> {
                         decoration: decorationConstant(
                           hintText: "Rutinitas Sholat",
                         ),
-                        value: rajinSholatValue,
+                        initialValue: rajinSholatValue,
                         items:
                             [
                               'Selalu tepat waktu',
@@ -919,6 +1028,7 @@ class _DaftarpageState extends State<Daftarpage> {
                       ),
                       SizedBox(height: 10),
                       TextFormField(
+                        controller: kajianRutinController,
                         decoration: decorationConstant(
                           hintText: "Jika iya, kajian apa dan dimana",
                         ),
@@ -936,7 +1046,7 @@ class _DaftarpageState extends State<Daftarpage> {
                         decoration: decorationConstant(
                           hintText: "Hafalan Al-Qur'an",
                         ),
-                        value: hafalanQuran,
+                        initialValue: hafalanQuran,
                         items:
                             [
                               'Juz 30',
@@ -1011,7 +1121,7 @@ class _DaftarpageState extends State<Daftarpage> {
                         decoration: decorationConstant(
                           hintText: "panjang hijab",
                         ),
-                        value: panjangHijab,
+                        initialValue: panjangHijab,
                         items:
                             [
                               'Tidak Berhijab',
@@ -1309,7 +1419,7 @@ class _DaftarpageState extends State<Daftarpage> {
                 child: buttonConstant(
                   width: 400,
                   text: "Simpan Profil",
-                  onPressed: () {
+                  onPressed: () async {
                     if (!setujuTidakKomunikasiDiluarSistem ||
                         !setujuSatuTaarufSatuWaktu ||
                         !setujuKebijakanPrivasi) {
@@ -1318,6 +1428,137 @@ class _DaftarpageState extends State<Daftarpage> {
                           content: Text(
                             "Harap setuju semua persyaratan dan kebijakan",
                           ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    final namaLengkap = namaLengkapController.text.trim();
+                    final tempatLahir = tempatLahirController.text.trim();
+                    final domisili = domisiliController.text.trim();
+                    final suku = sukuController.text.trim();
+                    final kewarganegaraan = kewarganegaraanController.text
+                        .trim();
+                    final pekerjaan = pekerjaanController.text.trim();
+                    final bidangPekerjaan = bidangPekerjaanController.text
+                        .trim();
+                    final penghasilan = penghasilanController.text.trim();
+                    final tentangSaya = tentangSayaController.text.trim();
+                    final kajianRutin = kajianRutinController.text.trim();
+
+                    if (namaLengkap.isEmpty ||
+                        _selectedDate == null ||
+                        tempatLahir.isEmpty ||
+                        domisili.isEmpty ||
+                        suku.isEmpty ||
+                        kewarganegaraan.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Harap lengkapi semua field yang wajib diisi",
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    final usia = _selectedDate != null
+                        ? DateTime.now().year - _selectedDate!.year
+                        : 0;
+
+                    final prefs = await SharedPreferences.getInstance();
+                    final userId = prefs.getInt('user_id');
+
+                    if (userId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Session tidak valid, silakan login ulang",
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    final profile = UserprofileModel(
+                      id: widget.profile?.id,
+                      userId: userId,
+                      namaLengkap: namaLengkap,
+                      jenisKelamin: jenisKelamin ?? 'Ikhwan',
+                      tanggalLahir: _selectedDate!.toIso8601String(),
+                      usia: usia,
+                      tempatlahir: tempatLahir,
+                      domisili: domisili,
+                      suku: suku,
+                      kewarganegaraan: kewarganegaraan,
+                      pendidikan: pendidikan ?? 'SD',
+                      pekerjaan: pekerjaan.isEmpty ? null : pekerjaan,
+                      bidangPekerjaan: bidangPekerjaan.isEmpty
+                          ? null
+                          : bidangPekerjaan,
+                      penghasilan: penghasilan.isEmpty ? null : penghasilan,
+                      targetNikah: targetMenikah ?? '< 6 bulan',
+                      waliTahu: waliMengetahui ? 1 : 0,
+                      bersediaPindah: bersediaPindahKota ? 1 : 0,
+                      tentangSaya: tentangSaya,
+                      statusNikah: statusPernikahan ?? 'Belum menikah',
+                      punyaAnak: punyaAnak ? 1 : 0,
+                      jumlahAnak: punyaAnak
+                          ? int.tryParse(jumlahAnakController.text)
+                          : null,
+                      mauPoligami: mauPoligami ?? 'Ya, saya bersedia',
+                      sholat: rajinSholatValue ?? 'Selalu tepat waktu',
+                      kajianRutin: kajianRutin.isEmpty ? null : kajianRutin,
+                      hafalanQuran: hafalanQuran ?? 'Juz 30',
+                      bercadar: apaBercadar ? 1 : 0,
+                      panjangHijab: panjangHijab ?? 'Tidak Berhijab',
+                      fotoKtp: fotoKTPPath,
+                      akteCerai: akteCeraiPath,
+                      buktiSedekah: buktiSedekahPath,
+                      setujuTidakKomunikasiDiluarSistem:
+                          setujuTidakKomunikasiDiluarSistem ? 1 : 0,
+                      setujuSatuTaarufSatuWaktu: setujuSatuTaarufSatuWaktu
+                          ? 1
+                          : 0,
+                      setujuKebijakanPrivasi: setujuKebijakanPrivasi ? 1 : 0,
+                      isProfileComplete: 1,
+                      createdAt:
+                          widget.profile?.createdAt ??
+                          DateTime.now().toIso8601String(),
+                      updatedAt: DateTime.now().toIso8601String(),
+                    );
+
+                    try {
+                      final result = await ProfileController().saveProfile(
+                        profile,
+                      );
+                      if (result['success'] == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result['message']),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        if (mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              result['message'] ?? 'Gagal menyimpan profil',
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Terjadi kesalahan: ${e.toString()}"),
                           backgroundColor: Colors.red,
                         ),
                       );

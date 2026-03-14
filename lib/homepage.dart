@@ -123,7 +123,7 @@ class _HomepageState extends State<Homepage> {
                       text: "Baca Selengkapnya",
                       width: 350,
                       onPressed: () {
-                        context.push(Artikelpage());
+                        context.push(ArtikelPage());
                       },
                     ),
                   ),

@@ -1,6 +1,7 @@
+// File: lib/handlers/login_handler.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zawj_app/controller/userController.dart';
-import 'package:zawj_app/database/preference.dart';
 
 class LoginHandler {
   static Future<bool> login({
@@ -17,7 +18,11 @@ class LoginHandler {
     final user = await UserController.loginUser(email, password);
 
     if (user != null) {
-      await PreferenceHandler.storingIsLogin(true);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('user_id', user.id!);
+      await prefs.setString('user_email', user.email ?? '');
+      await prefs.setString('user_nama', user.nama ?? '');
+
       _showSnackBar(context, 'Login berhasil!', Colors.green);
       onSuccess();
       return true;
