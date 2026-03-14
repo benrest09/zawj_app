@@ -4,7 +4,6 @@ import 'package:zawj_app/constant/app_color.dart';
 import 'package:zawj_app/constant/button_style.dart';
 import 'package:zawj_app/constant/decoration_form.dart';
 import 'package:zawj_app/controller/profile_controller.dart';
-import 'package:zawj_app/extention/navigator.dart';
 import 'package:zawj_app/models/userprofile_model.dart';
 
 class Daftarpage extends StatefulWidget {

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:zawj_app/main_screen.dart';
 import 'package:zawj_app/splash_screen.dart';
 
 void main() {
